@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { BEAR_X_LIMIT, updateBear } from '../entities/bear.js';
+import { BEAR_X_LIMIT, updateBear, nudgeBearZ } from '../entities/bear.js';
 import { getOrbitControls, initOrbitControls } from '../scene.js';
 import { toggleDevTools, resetDevTools } from './dev.js';
 import { bear, gameState } from './game.js';
@@ -37,22 +37,14 @@ function onPointerMove(event) {
 
 function onPointerUp(event) {
     isDragging = false;
-    // Detect vertical swipe/tap to roll log forward/back
     if (gameState.current !== 'PLAYING' || !bear) return;
-    const e = event.changedTouches ? event.changedTouches[0] : event;
-    const dx = e.clientX - startX, dy = e.clientY - startY;
-    const dt = Date.now() - startTime;
-    const absX = Math.abs(dx), absY = Math.abs(dy);
-    // consider as vertical gesture if vertical dominates or a quick tap
-    if (absY > 18 && absY > absX) {
-        const forward = dy < 0;
-        // nudge more on stronger swipe
-        const mag = Math.min(1, absY / 160);
-        const delta = (forward ? 1 : -1) * (0.12 + 0.22 * mag);
-        import('../entities/bear.js').then(m => m.nudgeBearZ?.(bear, delta));
-    } else if (dt < 180 && absX < 14 && absY < 14) {
-        // light tap: default small forward nudge
-        import('../entities/bear.js').then(m => m.nudgeBearZ?.(bear, 0.10));
+    updatePointer(event);
+    raycaster.setFromCamera(pointer, window.camera);
+    if (raycaster.ray.intersectPlane(dragPlane, _dragPoint)) {
+        const dz = _dragPoint.z - bear.position.z;
+        const mag = THREE.MathUtils.clamp(Math.abs(dz) / 2.0, 0, 1);
+        const delta = (dz > 0 ? 1 : -1) * (0.12 + 0.22 * mag);
+        nudgeBearZ(bear, delta);
     }
 }
 
