@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { BEAR_X_LIMIT, updateBear, nudgeBearZ } from '../entities/bear.js';
+import { BEAR_Z_MIN, BEAR_Z_MAX } from '../entities/bear.js';
 import { getOrbitControls, initOrbitControls } from '../scene.js';
 import { toggleDevTools, resetDevTools } from './dev.js';
 import { bear, gameState } from './game.js';
@@ -33,7 +34,7 @@ function onPointerMove(event) {
     if (raycaster.ray.intersectPlane(dragPlane, _dragPoint)) {
         // Pointer in front (smaller z) rolls log forward/up-river; behind (larger z) rolls back toward waterfall
         bear.userData.targetX = THREE.MathUtils.clamp(_dragPoint.x, -BEAR_X_LIMIT, BEAR_X_LIMIT);
-        bear.userData.zTarget = THREE.MathUtils.clamp(_dragPoint.z, 0.2, 2.1);
+        bear.userData.zTarget = THREE.MathUtils.clamp(_dragPoint.z, BEAR_Z_MIN, BEAR_Z_MAX);
         bear.userData.isMovingWithKeys = false;
     }
 }

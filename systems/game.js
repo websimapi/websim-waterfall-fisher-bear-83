@@ -311,7 +311,7 @@ export function updateGame() {
         if (!bear) return;
         // Apply gentle forward drift; player must occasionally counter with back swipes
         if (typeof bear.userData.zTarget === 'number') {
-            bear.userData.zTarget = Math.min(bear.userData.zTarget + Z_DRIFT_PER_TICK, 2.1);
+            bear.userData.zTarget = Math.min(bear.userData.zTarget + Z_DRIFT_PER_TICK, BEAR_Z_MAX);
         }
         updateBear(bear, 0); // Direction is now handled by controls
         const dz = bear.position.z - lastBearZ; lastBearZ = bear.position.z;
@@ -354,7 +354,7 @@ export function updateGame() {
         }
         // Fail if the bear rolls too far forward or back
         const z = bear.position.z;
-        if (z >= 2.1 || z <= 0.2) {
+        if (z >= BEAR_Z_MAX || z <= BEAR_Z_MIN) {
             gameState.streak = 1;
             updateUIValues({ score: gameState.score, streak: gameState.streak });
             gameOver();
