@@ -9,7 +9,8 @@ const pointer = new THREE.Vector2();
 let keysPressed = {};
 let isDragging = false;
 // Use a fixed plane at the log depth so dragging continues off the log
-const dragPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -1);
+// Intersect pointer with the river surface (y = 2) so we can read world Z (up/down river)
+const dragPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -2);
 const _dragPoint = new THREE.Vector3();
 
 /* swipe detection state */
@@ -30,8 +31,9 @@ function onPointerMove(event) {
     updatePointer(event);
     raycaster.setFromCamera(pointer, window.camera);
     if (raycaster.ray.intersectPlane(dragPlane, _dragPoint)) {
+        // Pointer in front (smaller z) rolls log forward/up-river; behind (larger z) rolls back toward waterfall
         bear.userData.targetX = THREE.MathUtils.clamp(_dragPoint.x, -BEAR_X_LIMIT, BEAR_X_LIMIT);
-        bear.userData.zTarget = THREE.MathUtils.clamp(_dragPoint.z, 0.2, 2.1); // follow pointer depth while dragging
+        bear.userData.zTarget = THREE.MathUtils.clamp(_dragPoint.z, 0.2, 2.1);
         bear.userData.isMovingWithKeys = false;
     }
 }
@@ -42,7 +44,7 @@ function onPointerUp(event) {
     updatePointer(event);
     raycaster.setFromCamera(pointer, window.camera);
     if (raycaster.ray.intersectPlane(dragPlane, _dragPoint)) {
-        const dz = _dragPoint.z - bear.position.z;
+        const dz = _dragPoint.z - bear.position.z; // positive -> behind (roll back), negative -> in front (roll forward)
         const mag = THREE.MathUtils.clamp(Math.abs(dz) / 2.0, 0, 1);
         const delta = (dz > 0 ? 1 : -1) * (0.12 + 0.22 * mag);
         nudgeBearZ(bear, delta);
