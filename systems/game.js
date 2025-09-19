@@ -25,6 +25,7 @@ const gravity = new THREE.Vector3(0, -0.05, 0);
 let isFirstLoad = true;
 /* gentle forward drift strength */
 const Z_DRIFT_PER_TICK = 0.0015;
+let lastBearZ = 0;
 
 /**
  * [FIX] Technical Note: The 'missing arm' bug on retry was due to improper
@@ -226,6 +227,7 @@ function startGame() {
     if (bear) scene.remove(bear);
     bear = createBear(playerProgress.selectedBear);
     scene.add(bear);
+    lastBearZ = bear.position.z;
 
     bear.position.x = 0;
     updateUIValues({ score: gameState.score, streak: gameState.streak });
@@ -312,6 +314,8 @@ export function updateGame() {
             bear.userData.zTarget = Math.min(bear.userData.zTarget + Z_DRIFT_PER_TICK, 2.1);
         }
         updateBear(bear, 0); // Direction is now handled by controls
+        const dz = bear.position.z - lastBearZ; lastBearZ = bear.position.z;
+        const log = scene.getObjectByName('log'); if (log) log.rotation.x += -dz * 2.6;
 
         updateSpawner(scene, activeFishes, gameState.score, playerProgress);
 

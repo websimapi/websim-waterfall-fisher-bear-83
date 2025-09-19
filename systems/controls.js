@@ -31,6 +31,7 @@ function onPointerMove(event) {
     raycaster.setFromCamera(pointer, window.camera);
     if (raycaster.ray.intersectPlane(dragPlane, _dragPoint)) {
         bear.userData.targetX = THREE.MathUtils.clamp(_dragPoint.x, -BEAR_X_LIMIT, BEAR_X_LIMIT);
+        bear.userData.zTarget = THREE.MathUtils.clamp(_dragPoint.z, 0.2, 2.1); // follow pointer depth while dragging
         bear.userData.isMovingWithKeys = false;
     }
 }
