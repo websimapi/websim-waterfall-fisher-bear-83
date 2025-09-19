@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { scene } from '../scene.js';
-import { createBear, updateBear, getHandAnchor } from '../entities/bear.js';
+import { createBear, updateBear, getHandAnchor, BEAR_Z_MIN, BEAR_Z_MAX } from '../entities/bear.js';
 import { createFish, updateFish } from '../entities/fish.js';
 import { initAudio, playSFX, sounds, wireAudioUnlock } from './audio.js';
 import { bindUI, updateUIValues, showGameOver, showHUD, showStart, populateUnlocks } from './ui.js';
@@ -315,7 +315,12 @@ export function updateGame() {
         }
         updateBear(bear, 0); // Direction is now handled by controls
         const dz = bear.position.z - lastBearZ; lastBearZ = bear.position.z;
-        const log = scene.getObjectByName('log'); if (log) log.rotation.x += -dz * 2.6;
+        const log = scene.getObjectByName('log');
+        if (log) {
+            log.rotation.x += -dz * 0.9; // slower roll
+            const targetZ = THREE.MathUtils.clamp(bear.position.z + 0.2, BEAR_Z_MIN + 0.2, BEAR_Z_MAX + 0.2);
+            log.position.z = THREE.MathUtils.lerp(log.position.z, targetZ, 0.08); // slow physical drift
+        }
 
         updateSpawner(scene, activeFishes, gameState.score, playerProgress);
 
