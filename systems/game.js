@@ -345,7 +345,14 @@ function proceedToStart() {
 function animateLogReset(done) {
     const log = scene.getObjectByName('log');
     if (!log) { done?.(); return; }
-    new TWEEN.Tween(log.position).to({ z: 1 }, 900).easing(TWEEN.Easing.Cubic.Out).start();
+    const camOffsetZ = camera.position.z - log.position.z; // keep current offset to log
+    new TWEEN.Tween(log.position).to({ z: 1 }, 900).easing(TWEEN.Easing.Cubic.Out)
+        .onUpdate(() => {
+            camera.position.x = 0; camera.position.y = CAM_OFFSET.y;
+            camera.position.z = log.position.z + camOffsetZ;
+            camera.lookAt(0, 2, log.position.z);
+        })
+        .start();
     new TWEEN.Tween(log.rotation)
         .to({ x: 0 }, 900)
         .easing(TWEEN.Easing.Cubic.Out)
