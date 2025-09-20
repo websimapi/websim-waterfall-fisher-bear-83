@@ -210,9 +210,17 @@ function setupStartScreen() {
     });
     
     console.log("[SETUP] Creating main showcase");
-    createOrUpdateShowcase(); // Ensure showcase is visible and up to date
-    // Face the other direction on the title screen (always)
-    if (showcaseBear) { showcaseBear.rotation.y = 0; showcaseBear.updateMatrixWorld(true); }
+    // animate log back first, then waddle bear in
+    animateLogReset(() => {
+        createOrUpdateShowcase();
+        if (showcaseBear) {
+            const fromRight = Math.random() < 0.5;
+            showcaseBear.position.set(fromRight ? 12 : -12, 4.65, 0.8);
+            showcaseBear.visible = true;
+            new TWEEN.Tween(showcaseBear.position).to({ x: 0 }, 1200).easing(TWEEN.Easing.Quadratic.Out).start();
+            new TWEEN.Tween(showcaseBear.rotation).to({ z: fromRight ? -0.12 : 0.12 }, 300).yoyo(true).repeat(6).easing(TWEEN.Easing.Sine.InOut).start();
+        }
+    });
     showStart(isFirstLoad);
     isFirstLoad = false;
     startButton.innerText = 'START';
@@ -306,6 +314,13 @@ function proceedToStart() {
         startButton.innerText = 'RETRY';
     };
     goScreen.addEventListener('animationend', onFadeOut);
+}
+
+function animateLogReset(done) {
+    const log = scene.getObjectByName('log');
+    if (!log) { done?.(); return; }
+    new TWEEN.Tween(log.position).to({ z: 1 }, 900).easing(TWEEN.Easing.Cubic.Out).start();
+    new TWEEN.Tween(log.rotation).to({ x: 0 }, 900).easing(TWEEN.Easing.Cubic.Out).onComplete(()=>done?.()).start();
 }
 
 export function initGame() {
