@@ -10,6 +10,7 @@ import * as TWEEN from 'tween';
 import { addLocalScore } from './leaderboard.js';
 import { startRecording, stopRecording } from './recorder.js';
 import { renderer } from '../scene.js';
+import { camera } from '../scene.js';
 
 // --- GAME OBJECTS ---
 export let bear = null;
@@ -26,6 +27,9 @@ let isFirstLoad = true;
 /* gentle forward drift strength */
 const Z_DRIFT_PER_TICK = 0.0008;
 let lastBearZ = 0;
+/* camera follow config */
+const CAM_OFFSET = new THREE.Vector3(0, 12, 9);
+const CAM_LERP = 0.08;
 
 /**
  * [FIX] Technical Note: The 'missing arm' bug on retry was due to improper
@@ -229,6 +233,10 @@ function startGame() {
     scene.add(bear);
     lastBearZ = bear.position.z;
 
+    /* snap camera near follow position on start */
+    camera.position.set(bear.position.x * 0.3, CAM_OFFSET.y, bear.position.z + CAM_OFFSET.z);
+    camera.lookAt(bear.position.x, 2, bear.position.z);
+
     bear.position.x = 0;
     updateUIValues({ score: gameState.score, streak: gameState.streak });
     showHUD();
@@ -321,6 +329,15 @@ export function updateGame() {
             const targetZ = THREE.MathUtils.clamp(bear.position.z + 0.2, BEAR_Z_MIN + 0.2, BEAR_Z_MAX + 0.2);
             log.position.z = THREE.MathUtils.lerp(log.position.z, targetZ, 0.05); // slower physical drift
         }
+
+        // Smooth camera follow
+        const desiredX = bear.position.x * 0.3;
+        const desiredY = CAM_OFFSET.y;
+        const desiredZ = bear.position.z + CAM_OFFSET.z;
+        camera.position.x += (desiredX - camera.position.x) * CAM_LERP;
+        camera.position.y += (desiredY - camera.position.y) * CAM_LERP;
+        camera.position.z += (desiredZ - camera.position.z) * CAM_LERP;
+        camera.lookAt(bear.position.x, 2, bear.position.z);
 
         updateSpawner(scene, activeFishes, gameState.score, playerProgress);
 
