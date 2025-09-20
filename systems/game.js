@@ -67,6 +67,13 @@ function disposeObject(obj) {
     }
 }
 
+/* add: purge any stray non-active bears from scene */
+function purgeStrayBears() {
+    scene.children
+        .filter(o => o?.name === 'bear' && o !== bear)
+        .forEach(o => { try { scene.remove(o); } catch {} });
+}
+
 function createOrUpdateShowcase() {
     console.log("[SHOWCASE] Starting showcase creation/update");
     console.log("[SHOWCASE] Current showcase bear exists:", !!showcaseBear);
@@ -168,6 +175,7 @@ function setupShowcaseAnimation() {
 function setupStartScreen() {
     console.log("[SETUP] Setting up start screen");
     gameState.current = 'IDLE';
+    purgeStrayBears();
     
     // Hide any active game objects (but not showcase objects)
     scene.children.forEach(child => {
@@ -246,6 +254,7 @@ function setupStartScreen() {
 }
 
 function startGame() {
+    purgeStrayBears();
     gameState = { current: 'PLAYING', score: 0, streak: 1 };
     TWEEN.removeAll(); // stop showcase tweens when gameplay begins
     
