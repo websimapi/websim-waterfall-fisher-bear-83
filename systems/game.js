@@ -234,8 +234,8 @@ function startGame() {
     lastBearZ = bear.position.z;
 
     /* snap camera near follow position on start */
-    camera.position.set(bear.position.x * 0.3, CAM_OFFSET.y, bear.position.z + CAM_OFFSET.z);
-    camera.lookAt(bear.position.x, 2, bear.position.z);
+    camera.position.set(0, CAM_OFFSET.y, bear.position.z + CAM_OFFSET.z);
+    camera.lookAt(0, 2, bear.position.z);
 
     bear.position.x = 0;
     updateUIValues({ score: gameState.score, streak: gameState.streak });
@@ -331,13 +331,13 @@ export function updateGame() {
         }
 
         // Smooth camera follow
-        const desiredX = bear.position.x * 0.3;
+        const desiredX = 0;
         const desiredY = CAM_OFFSET.y;
         const desiredZ = bear.position.z + CAM_OFFSET.z;
         camera.position.x += (desiredX - camera.position.x) * CAM_LERP;
         camera.position.y += (desiredY - camera.position.y) * CAM_LERP;
         camera.position.z += (desiredZ - camera.position.z) * CAM_LERP;
-        camera.lookAt(bear.position.x, 2, bear.position.z);
+        camera.lookAt(0, 2, bear.position.z);
 
         updateSpawner(scene, activeFishes, gameState.score, playerProgress);
 
