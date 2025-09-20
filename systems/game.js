@@ -24,7 +24,7 @@ export let gameState = { current: 'IDLE', score: 0, streak: 1, idleAnimTimer: 0 
 const gravity = new THREE.Vector3(0, -0.05, 0);
 let isFirstLoad = true;
 /* gentle forward drift strength */
-const Z_DRIFT_PER_TICK = 0.0015;
+const Z_DRIFT_PER_TICK = 0.0008;
 let lastBearZ = 0;
 
 /**
@@ -317,9 +317,9 @@ export function updateGame() {
         const dz = bear.position.z - lastBearZ; lastBearZ = bear.position.z;
         const log = scene.getObjectByName('log');
         if (log) {
-            log.rotation.x += -dz * 0.5; // slower roll
+            log.rotation.x += -dz * 0.35; // slower roll
             const targetZ = THREE.MathUtils.clamp(bear.position.z + 0.2, BEAR_Z_MIN + 0.2, BEAR_Z_MAX + 0.2);
-            log.position.z = THREE.MathUtils.lerp(log.position.z, targetZ, 0.08); // slow physical drift
+            log.position.z = THREE.MathUtils.lerp(log.position.z, targetZ, 0.05); // slower physical drift
         }
 
         updateSpawner(scene, activeFishes, gameState.score, playerProgress);

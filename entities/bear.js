@@ -13,7 +13,7 @@ export const BEAR_X_LIMIT = 3.5;
 const BEAR_MOVE_SPEED = 0.08;
 /* add Z roll controls */
 export const BEAR_Z_MIN = -9.0, BEAR_Z_MAX = 2.1;
-const BEAR_Z_SPEED = 0.022;
+const BEAR_Z_SPEED = 0.012;
 const BEAR_WOBBLE_AMOUNT = 0.2;
 
 function createVoxel(x, y, z, w, h, d, mat) {

@@ -47,7 +47,7 @@ function onPointerUp(event) {
     if (raycaster.ray.intersectPlane(dragPlane, _dragPoint)) {
         const dz = _dragPoint.z - bear.position.z; // positive -> behind (roll back), negative -> in front (roll forward)
         const mag = THREE.MathUtils.clamp(Math.abs(dz) / 2.0, 0, 1);
-        const delta = (dz > 0 ? 1 : -1) * (0.12 + 0.22 * mag);
+        const delta = (dz > 0 ? 1 : -1) * (0.06 + 0.12 * mag);
         nudgeBearZ(bear, delta);
     }
 }
