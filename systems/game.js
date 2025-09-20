@@ -67,13 +67,6 @@ function disposeObject(obj) {
     }
 }
 
-/* add: purge any stray non-active bears from scene */
-function purgeStrayBears() {
-    scene.children
-        .filter(o => o?.name === 'bear' && o !== bear)
-        .forEach(o => { try { scene.remove(o); } catch {} });
-}
-
 function createOrUpdateShowcase() {
     console.log("[SHOWCASE] Starting showcase creation/update");
     console.log("[SHOWCASE] Current showcase bear exists:", !!showcaseBear);
@@ -175,7 +168,6 @@ function setupShowcaseAnimation() {
 function setupStartScreen() {
     console.log("[SETUP] Setting up start screen");
     gameState.current = 'IDLE';
-    purgeStrayBears();
     
     // Hide any active game objects (but not showcase objects)
     scene.children.forEach(child => {
@@ -254,22 +246,13 @@ function setupStartScreen() {
 }
 
 function startGame() {
-    purgeStrayBears();
     gameState = { current: 'PLAYING', score: 0, streak: 1 };
     TWEEN.removeAll(); // stop showcase tweens when gameplay begins
     
-    // showcase bear: waddle-rotate to face the river before hiding
+    // Immediately hide showcase bear to prevent double-visual glitch
     if (showcaseBear && showcaseBear.visible) {
-        const baseZ = showcaseBear.rotation.z;
-        new TWEEN.Tween(showcaseBear.rotation)
-            .to({ y: Math.PI }, 700)
-            .easing(TWEEN.Easing.Quadratic.InOut)
-            .onUpdate(() => { showcaseBear.rotation.z = Math.sin(Date.now()*0.012) * 0.12; })
-            .onComplete(() => { showcaseBear.rotation.z = baseZ; showcaseBear.visible = false; })
-            .start();
+        showcaseBear.visible = false;
     }
-    // remove immediate hide of showcase bear
-    // showcaseBear.visible = false;
     
     if (bear) scene.remove(bear);
     bear = createBear(playerProgress.selectedBear);
