@@ -320,7 +320,11 @@ function animateLogReset(done) {
     const log = scene.getObjectByName('log');
     if (!log) { done?.(); return; }
     new TWEEN.Tween(log.position).to({ z: 1 }, 900).easing(TWEEN.Easing.Cubic.Out).start();
-    new TWEEN.Tween(log.rotation).to({ x: 0 }, 900).easing(TWEEN.Easing.Cubic.Out).onComplete(()=>done?.()).start();
+    new TWEEN.Tween(log.rotation)
+        .to({ x: 0 }, 900)
+        .easing(TWEEN.Easing.Cubic.Out)
+        .onComplete(() => { try { done?.(); } catch (e) { console.warn('animateLogReset done() error:', e); } })
+        .start();
 }
 
 export function initGame() {
