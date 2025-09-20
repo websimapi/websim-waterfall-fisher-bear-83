@@ -217,8 +217,20 @@ function setupStartScreen() {
             const fromRight = Math.random() < 0.5;
             showcaseBear.position.set(fromRight ? 12 : -12, 4.65, 0.8);
             showcaseBear.visible = true;
-            new TWEEN.Tween(showcaseBear.position).to({ x: 0 }, 1200).easing(TWEEN.Easing.Quadratic.Out).start();
-            new TWEEN.Tween(showcaseBear.rotation).to({ z: fromRight ? -0.12 : 0.12 }, 300).yoyo(true).repeat(6).easing(TWEEN.Easing.Sine.InOut).start();
+            const startX = showcaseBear.position.x, endX = 0, baseY = 4.65;
+            const duration = 1400;
+            new TWEEN.Tween(showcaseBear.position)
+                .to({ x: endX }, duration)
+                .easing(TWEEN.Easing.Quadratic.Out)
+                .onUpdate(() => {
+                    const total = Math.max(0.0001, Math.abs(startX - endX));
+                    const progress = 1 - (Math.abs(showcaseBear.position.x - endX) / total);
+                    const phase = progress * Math.PI * 6; // ~3 full waddles
+                    showcaseBear.rotation.z = Math.sin(phase) * 0.18 * (fromRight ? -1 : 1);
+                    showcaseBear.position.y = baseY + Math.abs(Math.sin(phase)) * 0.12;
+                })
+                .onComplete(() => { showcaseBear.rotation.z = 0; showcaseBear.position.y = baseY; })
+                .start();
         }
     });
     showStart(isFirstLoad);
