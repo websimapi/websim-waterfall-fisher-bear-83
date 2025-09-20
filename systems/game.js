@@ -218,7 +218,7 @@ function setupStartScreen() {
             showcaseBear.position.set(fromRight ? 12 : -12, 4.65, 0.8);
             showcaseBear.visible = true;
             // face toward the log along X while walking in
-            showcaseBear.rotation.y = fromRight ? Math.PI/2 : -Math.PI/2;
+            showcaseBear.rotation.y = fromRight ? -Math.PI/2 : Math.PI/2;
             const startX = showcaseBear.position.x, endX = 0, baseY = 4.65;
             const duration = 2400;
             new TWEEN.Tween(showcaseBear.position)
