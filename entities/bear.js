@@ -12,7 +12,7 @@ const darkPolarMat = new THREE.MeshLambertMaterial({ color: 0xb0b0b0 });
 export const BEAR_X_LIMIT = 3.5;
 const BEAR_MOVE_SPEED = 0.08;
 /* add Z roll controls */
-export const BEAR_Z_MIN = -0.6, BEAR_Z_MAX = 2.1;
+export const BEAR_Z_MIN = -2.2, BEAR_Z_MAX = 2.1;
 const BEAR_Z_SPEED = 0.04;
 const BEAR_WOBBLE_AMOUNT = 0.2;
 
